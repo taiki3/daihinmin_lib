@@ -1,7 +1,3 @@
-import numpy as np
-import re
-
-
 class Card:
     def __init__(self, suit=None, num=None):
         self.suit = suit
@@ -164,6 +160,14 @@ class State:
                     return self.order[k + 1]
                 else:
                     return self.order[1]
+
+    def getActivePlayer(self):
+        return self.nOrder.name
+
+    def getActivePlayerHands(self):
+        for pl in self.player:
+            if pl.name == self.nOrder.name:
+                return pl.hand
 
     def getState(self):
         return self.gameId, self.board, self.order, self.nOrder, self.pRank, self.nRank, self.player, self.pPlayer, self.lPlayer, self.bind, self.revo
