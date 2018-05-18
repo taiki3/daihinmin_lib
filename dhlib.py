@@ -182,3 +182,5 @@ class StateExch:
 
     def getPlayersCard(self):
         return [p.hand for p in self.player]
+
+#TEST
