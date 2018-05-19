@@ -3,9 +3,10 @@ import re
 #####
 # BitCard(BitCards) における各ビットはそれぞれのカードの所持/非所持を意味する
 # スートの強さは s > h > d > c とする
+# ジョーカーを1枚だけ用いるときは52を利用する
 #      3  4  5  6  7  8  9 10  J  Q  K  A  2 JKR
-#  c|  0  4  8 12 16 20 24 28 32 36 40 44 48 52
-#  d|  1  5  9 13 17 21 25 29 33 37 41 45 49 53
+#  c|  0  4  8 12 16 20 24 28 32 36 40 44 48 52 (RED_JOKER)
+#  d|  1  5  9 13 17 21 25 29 33 37 41 45 49 53 (BLACK_JOKER)
 #  h|  2  6 10 14 18 22 26 30 34 38 42 46 50
 #  s|  3  7 11 15 19 23 27 31 35 39 43 47 51
 #####
@@ -13,10 +14,10 @@ import re
 SUIT = (0,1,2,3)
 RANK = (0,1,2,3,4,5,6,7,8,9,10,11,12)
 
-pattern_num_card = r"[SHDCshdc](((?<!\d)([1-9]|1[0-3])(?!\d))|[JQKAjqka])"
-pattern_joker = r"(JKR|JOKER|jkr|joker)(?![12])$"
-pattern_red_joker = r"RED_JOKER|JKR1|JOKER1|red_joker|jkr1|joker1"
-pattern_black_joker = r"BLACK_JOKER|JKR2|JOKER2|black_oker|jkr2|joker2"
+pattern_num_card = r"^([SHDCshdc](((?<!\d)([1-9]|1[0-3])(?!\d))|[JQKAjqka]))$"
+pattern_joker = r"^(JKR|JOKER|[Jj]kr|[Jj]oker)(?![12])$"
+pattern_red_joker = r"^(RED.*(JOKER)|JKR1|JOKER1|[Rr]ed.*([Jj]oker)|[Jj]kr1|[Jj]oker1)$"
+pattern_black_joker = r"^(BLACK.*(JOKER)|JKR2|JOKER2|[Bb]lack.*([Jj]oker)|[jJ]kr2|[Jj]oker2)$"
 
 def get_joker():
     return 0b1 << 52
@@ -42,15 +43,13 @@ def get_rank_from_string(string_num):
         elif "Q"  in string_num.upper(): return 9
         elif "K"  in string_num.upper(): return 10
         elif "A"  in string_num.upper(): return 11
-        elif "1"  in string_num: return 11
-        elif "2"  in string_num: return 12
 
     try:
         card_num = int(string_num)
     except ValueError:
         return False
 
-    if card_num < 9 and card_num > 2 :
+    if card_num <= 13 and card_num >= 3 :
         return card_num - 3
     elif card_num is 1: return 11
     elif card_num is 2: return 12
@@ -73,21 +72,27 @@ def get_a_card_from_string(string_card):
     else:
         return False
 
+def get_cards_from_string(string_cards):
+    if not isinstance(string_cards, str): return False
+
+    elements = [e for e in re.split('[ ,\\t]', string_cards) if e != ""]
+    bit_card_list = [get_a_card_from_string(e) for e in elements]
+    if not all(bit_card_list): return False
+    bit_card_list = list(set(bit_card_list))
+    bit_cards = sum(bit_card_list)
+
+    return bit_cards
+
 
 if __name__ == '__main__':
-    print(bin(get_a_card_from_string("h5")))
+    pass
+    #print(get_a_card_from_string("black*joker"))
+    print(get_cards_from_string("red*Joker"))
 
 
-#########
-###以下、未改修
-#########
-def gen_bit_card_from_string(self, str):
-    if str == "": return 0b0
-
-    if "JKR" in str: return 0b1 << 52
-
-    suit, num = str[0:1], str[1:]
-    return 0b1 << BitCard.GRADE[num] * 4 + BitCard.SUIT[suit]
+#####
+###以下、未改修 2018.05.19
+#####
 
 def genBitCardsFromString(self, str):
     bitCards = 0b0
