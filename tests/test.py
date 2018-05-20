@@ -297,3 +297,144 @@ class TestGetCardsFromString(unittest.TestCase):
         cards = dhlib.get_cards_from_string(string)
         self.assertEqual(cards, False)
 
+    def test_all_card(self):
+        string = "c3 d3 h3 s3 " \
+                     + "c4 d4 h4 s4 " \
+                     + "c5 d5 h5 s5 " \
+                     + "c6 d6 h6 s6 " \
+                     + "c7 d7 h7 s7 " \
+                     + "c8 d8 h8 s8 " \
+                     + "c9 d9 h9 s9 " \
+                     + "c10 d10 h10 s10 " \
+                     + "c11 d11 h11 s11 " \
+                     + "c12 d12 h12 s12 " \
+                     + "c13 d13 h13 s13 " \
+                     + "c1 d1 h1 s1 " \
+                     + "c2 d2 h2 s2 JOKER"
+        cards = dhlib.get_cards_from_string(string)
+        self.assertEqual(cards, (0b1<<53)-0b1)
+
+    def test_all_card_and_two_joker(self):
+        string = "c3 d3 h3 s3 " \
+                     + "c4 d4 h4 s4 " \
+                     + "c5 d5 h5 s5 " \
+                     + "c6 d6 h6 s6 " \
+                     + "c7 d7 h7 s7 " \
+                     + "c8 d8 h8 s8 " \
+                     + "c9 d9 h9 s9 " \
+                     + "c10 d10 h10 s10 " \
+                     + "c11 d11 h11 s11 " \
+                     + "c12 d12 h12 s12 " \
+                     + "c13 d13 h13 s13 " \
+                     + "c1 d1 h1 s1 " \
+                     + "c2 d2 h2 s2 " \
+                     + "RED_JOKER BLACK_JOKER"
+        cards = dhlib.get_cards_from_string(string)
+        self.assertEqual(cards, (0b1<<54)-0b1)
+
+    def test_crazy_string(self):
+        string = "Ee8Q9MXI9%d,6epB*9  Ni0VGH&LU \\#ZY0uot/ToFe3+GGjnAV%Q/x&V"
+        cards = dhlib.get_cards_from_string(string)
+        self.assertEqual(cards, False)
+
+
+class TestGetStringFromCards(unittest.TestCase):
+
+    def test_normal_card(self):
+        card = 0b1<<13
+        string = dhlib.get_string_from_cards(card)
+        self.assertEqual(string, "d6")
+
+    def test_joker(self):
+        card = 0b1<<52
+        string = dhlib.get_string_from_cards(card)
+        self.assertEqual(string, "JOKER")
+
+    def test_card_face(self):
+        card = 0b1<<36
+        string = dhlib.get_string_from_cards(card)
+        self.assertEqual(string, "c12")
+
+    def test_card_num2(self):
+        card = 0b1<<50
+        string = dhlib.get_string_from_cards(card)
+        self.assertEqual(string, "h2")
+
+    def test_no_card(self):
+        card = 0b0
+        string = dhlib.get_string_from_cards(card)
+        self.assertEqual(string, "")
+
+    def test_bad_card(self):
+        card = 0b1<<60
+        string = dhlib.get_string_from_cards(card)
+        self.assertEqual(string, False)
+
+    def test_crazy_num(self):
+        card = (0b1<<1000) + 4649
+        string = dhlib.get_string_from_cards(card)
+        self.assertEqual(string, False)
+
+    def test_not_int(self):
+        card = 3.14159
+        string = dhlib.get_string_from_cards(card)
+        self.assertEqual(string, False)
+
+    def test_two_normal_cards(self):
+        cards = 0b1<<13 | 0b1<<34
+        string = dhlib.get_string_from_cards(cards)
+        self.assertEqual(string, "d6 h11")
+
+    def test_normal_card_and_bad_card(self):
+        cards = 0b1<<18 | 0b1<<55
+        string = dhlib.get_string_from_cards(cards)
+        self.assertEqual(string, False)
+
+    def test_normal_card_and_joker(self):
+        cards = 0b1<<50 | 0b1<<52
+        string = dhlib.get_string_from_cards(cards)
+        self.assertEqual(string, "h2 JOKER")
+
+    def test_bad_card_and_joker(self):
+        cards = 0b1<<63 | 0b1<<52
+        string = dhlib.get_string_from_cards(cards)
+        self.assertEqual(string, False)
+
+    def test_normal_card_and_bad_joker(self):
+        cards = 0b1<<50 | 0b1<<53
+        string = dhlib.get_string_from_cards(cards)
+        self.assertEqual(string, False)
+
+    def test_all_card(self):
+        cards = (0b1<<53) - 1
+        string = dhlib.get_string_from_cards(cards)
+        match_string = "c3 d3 h3 s3 " \
+                     + "c4 d4 h4 s4 " \
+                     + "c5 d5 h5 s5 " \
+                     + "c6 d6 h6 s6 " \
+                     + "c7 d7 h7 s7 " \
+                     + "c8 d8 h8 s8 " \
+                     + "c9 d9 h9 s9 " \
+                     + "c10 d10 h10 s10 " \
+                     + "c11 d11 h11 s11 " \
+                     + "c12 d12 h12 s12 " \
+                     + "c13 d13 h13 s13 " \
+                     + "c1 d1 h1 s1 " \
+                     + "c2 d2 h2 s2 JOKER"
+        self.assertEqual(string, match_string)
+
+    ### get_string_from_cards_with_two_joker
+    def test_red_joker(self):
+        cards = 0b1<<52
+        string = dhlib.get_string_from_cards_with_two_joker(cards)
+        self.assertEqual(string, "RED_JOKER")
+
+    def test_black_joker(self):
+        cards = 0b1<<53
+        string = dhlib.get_string_from_cards_with_two_joker(cards)
+        self.assertEqual(string, "BLACK_JOKER")
+
+    def test_two_joker(self):
+        cards = 0b1<<52 | 0b1<<53
+        string = dhlib.get_string_from_cards_with_two_joker(cards)
+        self.assertEqual(string, "RED_JOKER BLACK_JOKER")
