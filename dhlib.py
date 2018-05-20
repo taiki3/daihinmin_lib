@@ -141,17 +141,7 @@ def print_exist_cards_table(cards):
     print(string_table)
     return
 
-if __name__ == '__main__':
-    pass
-    print_exist_cards_table(get_upper_rank_cards(10))
-    #get_string_from_cards(0b1<<3|0b1<<5)
-
-
-#####
-###以下、未改修 2018.05.19
-#####
-
-def isLock(self, bc1, bc2):
+def is_lock(bc1, bc2):
     vBc1 = (bin(bc1 & 0x0001111111111111).count("1") * 1 +
             bin(bc1 & 0x0002222222222222).count("1") * 2 +
             bin(bc1 & 0x0004444444444444).count("1") * 4 +
@@ -163,6 +153,27 @@ def isLock(self, bc1, bc2):
             bin(bc2 & 0x0008888888888888).count("1") * 8)
 
     return True if (vBc1 is vBc2) else False
+
+def pickUp4(c):
+    a = c & (c >> 1)
+    return a & (a >> 2) & 0x1111111111111111
+
+if __name__ == '__main__':
+    pass
+    c = ( 0b1<<12|0b1<<13|0b1<<14|0b1<<15 | 0b1<<34 )
+    print_exist_cards_table(c)
+    print_exist_cards_table(pickUp4(c))
+#     print_exist_cards_table(0x0001111111111111)
+#     print_exist_cards_table(0x0002222222222222)
+#     print_exist_cards_table(0x0004444444444444)
+#     print_exist_cards_table(0x0008888888888888)
+    #get_string_from_cards(0b1<<3|0b1<<5)
+
+
+#####
+###以下、未改修 2018.05.19
+#####
+
 
 class Player:
     def __init__(self, name, hand=0b0, used=0b0):
