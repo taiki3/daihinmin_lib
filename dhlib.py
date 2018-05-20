@@ -113,54 +113,43 @@ def get_string_from_cards_with_two_joker(bit_cards):
     if not all(strings): return False
     return " ".join(strings)
 
+def get_number_of_cards(bit_cards):
+    return bin(bit_cards).count("1")
+
+def get_lower_rank_cards(rank):
+    return (0b1 << rank*4) - 0b1
+
+def get_upper_rank_cards(rank):
+    all_cards = (0b1 << 52) - 0b1
+    return all_cards & ~get_lower_rank_cards(rank+1)
+
+def print_exist_cards_table(cards):
+#主にデバッグ用
+    string_table = "   3 4 5 6 7 8 9 X J Q K A 2\n"
+    for string_suit, suit in SUIT_INDEX.items():
+        string_table += (string_suit+"|")
+
+        for rank in RANK_INDEX.values():
+            if(cards & pow(2,rank*4+suit)):
+                string_table += "{:>2}".format(1)
+            else:
+                string_table += " -"
+        string_table += "\n"
+
+    string_table += "JOKER1:[ 1 ]" if(cards & pow(2,52)) else "JOKER1:[ - ]"
+    string_table += "  JOKER2:[ 1 ]" if(cards & pow(2,53)) else "  JOKER2:[ - ]"
+    print(string_table)
+    return
+
 if __name__ == '__main__':
     pass
+    print_exist_cards_table(get_upper_rank_cards(10))
     #get_string_from_cards(0b1<<3|0b1<<5)
 
 
 #####
 ###以下、未改修 2018.05.19
 #####
-
-
-def getCardsFromBitCards(self):
-    cards = []
-    if (self.bitCards & pow(2, 52)): cards.append(Card("JKR", "JKR"))
-
-    for s, v in BitCard.SUIT.items():
-        for r, u in BitCard.GRADE.items():
-            if (self.bitCards & pow(2, u * 4 + v)): cards.append(Card(s, r))
-
-    return cards
-
-def getStringCardsFromBitCards(self):
-    str = ""
-    for c in BitCard.getCardsFromBitCards(self.bitCards):
-        if (c.suit is "JKR"):
-            str += "JKR "
-        else:
-            str += c.suit + c.num + " "
-
-    return str.strip()
-
-def getNumberOfBitCards(self):
-    return bin(self.bitCards).count("1")
-
-def getNumberOfBitCards(self, c):
-    return bin(c).count("1")
-
-def getStringTableFromBitCards(self):
-    str = "   3 4 5 6 7 8 9 X J Q K A 2\n"
-    for s, v in sorted(BitCard.SUIT.items()):
-        str += s + "|"
-
-        for u in sorted(BitCard.GRADE.values()):
-            str += '{:>2}'.format(1 if (self.bitCards & pow(2, u * 4 + v)) else 0)
-        str += "\n"
-
-    str += "JKR:1" if (self.bitCards & pow(2, 52)) else "JKR:0"
-
-    return str
 
 def isLock(self, bc1, bc2):
     vBc1 = (bin(bc1 & 0x0001111111111111).count("1") * 1 +

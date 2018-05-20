@@ -438,3 +438,45 @@ class TestGetStringFromCards(unittest.TestCase):
         cards = 0b1<<52 | 0b1<<53
         string = dhlib.get_string_from_cards_with_two_joker(cards)
         self.assertEqual(string, "RED_JOKER BLACK_JOKER")
+
+
+class TestGetLowerAndUpper(unittest.TestCase):
+
+    def test_lower_rank_3(self):
+        rank = 3
+        cards = dhlib.get_lower_rank_cards(rank)
+        match_cards = (0b1|0b1<<1|0b1<<2|0b1<<3 \
+                      |0b1<<4|0b1<<5|0b1<<6|0b1<<7 \
+                      |0b1<<8|0b1<<9|0b1<<10|0b1<<11)
+        self.assertEqual(cards,match_cards)
+
+    def test_lower_rank_0(self):
+        rank = 0
+        cards = dhlib.get_lower_rank_cards(rank)
+        match_cards = 0b0
+        self.assertEqual(cards,match_cards)
+
+    def test_upper_rank_10(self):
+        rank = 10
+        cards = dhlib.get_upper_rank_cards(rank)
+        match_cards = (0b1<<44|0b1<<45|0b1<<46|0b1<<47 \
+                      |0b1<<48|0b1<<49|0b1<<50|0b1<<51)
+        self.assertEqual(cards,match_cards)
+
+    def test_upper_rank_0(self):
+        rank = 0
+        cards = dhlib.get_upper_rank_cards(rank)
+        match_cards = (0b1<<4|0b1<<5|0b1<<6|0b1<<7 \
+                      |0b1<<8|0b1<<9|0b1<<10|0b1<<11 \
+                      |0b1<<12|0b1<<13|0b1<<14|0b1<<15 \
+                      |0b1<<16|0b1<<17|0b1<<18|0b1<<19 \
+                      |0b1<<20|0b1<<21|0b1<<22|0b1<<23 \
+                      |0b1<<24|0b1<<25|0b1<<26|0b1<<27 \
+                      |0b1<<28|0b1<<29|0b1<<30|0b1<<31 \
+                      |0b1<<32|0b1<<33|0b1<<34|0b1<<35 \
+                      |0b1<<36|0b1<<37|0b1<<38|0b1<<39 \
+                      |0b1<<40|0b1<<41|0b1<<42|0b1<<43 \
+                      |0b1<<44|0b1<<45|0b1<<46|0b1<<47 \
+                      |0b1<<48|0b1<<49|0b1<<50|0b1<<51)
+        self.assertEqual(cards,match_cards)
+
