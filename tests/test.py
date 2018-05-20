@@ -38,6 +38,21 @@ class TestGetACardFromString(unittest.TestCase):
         card = dhlib.get_a_card_from_string(string)
         self.assertEqual(card, 0b1<<52)
 
+    def test_jk_upper(self):
+        string = "JK"
+        card = dhlib.get_a_card_from_string(string)
+        self.assertEqual(card, 0b1<<52)
+
+    def test_jk_upper_camel(self):
+        string = "Jk"
+        card = dhlib.get_a_card_from_string(string)
+        self.assertEqual(card, 0b1<<52)
+
+    def test_jk_lower(self):
+        string = "jk"
+        card = dhlib.get_a_card_from_string(string)
+        self.assertEqual(card, 0b1<<52)
+
     def test_red_joker_upper(self):
         string = "RED_JOKER"
         card = dhlib.get_a_card_from_string(string)
@@ -70,6 +85,21 @@ class TestGetACardFromString(unittest.TestCase):
 
     def test_joker1_upper_camel(self):
         string = "Joker1"
+        card = dhlib.get_a_card_from_string(string)
+        self.assertEqual(card, 0b1<<52)
+
+    def test_jk1_upper(self):
+        string = "JK1"
+        card = dhlib.get_a_card_from_string(string)
+        self.assertEqual(card, 0b1<<52)
+
+    def test_jk1_upper_camel(self):
+        string = "Jk1"
+        card = dhlib.get_a_card_from_string(string)
+        self.assertEqual(card, 0b1<<52)
+
+    def test_jk1_lower(self):
+        string = "jk1"
         card = dhlib.get_a_card_from_string(string)
         self.assertEqual(card, 0b1<<52)
 
@@ -115,6 +145,21 @@ class TestGetACardFromString(unittest.TestCase):
 
     def test_joker2_upper_camel(self):
         string = "Joker2"
+        card = dhlib.get_a_card_from_string(string)
+        self.assertEqual(card, 0b1<<53)
+
+    def test_jk2_upper(self):
+        string = "JK2"
+        card = dhlib.get_a_card_from_string(string)
+        self.assertEqual(card, 0b1<<53)
+
+    def test_jk2_upper_camel(self):
+        string = "Jk2"
+        card = dhlib.get_a_card_from_string(string)
+        self.assertEqual(card, 0b1<<53)
+
+    def test_jk2_lower(self):
+        string = "jk2"
         card = dhlib.get_a_card_from_string(string)
         self.assertEqual(card, 0b1<<53)
 
@@ -185,6 +230,11 @@ class TestGetCardsFromString(unittest.TestCase):
         string = "h1 s5"
         cards = dhlib.get_cards_from_string(string)
         self.assertEqual(cards, 0b1<<46 | 0b1<<11)
+
+    def test_same_card(self):
+        string = "S5 s5"
+        cards = dhlib.get_cards_from_string(string)
+        self.assertEqual(cards, 0b1<<11)
 
     def test_one_joker(self):
         string = "JOKER"
